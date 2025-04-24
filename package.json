@@ -1,10 +1,11 @@
 {
-  "name": "project",
+  "name": "urban-community-garden-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for Urban Community Garden Platform",
   "main": "loginserver.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node loginserver.js",
+    "build": "echo \"No frontend build needed for backend\""
   },
   "keywords": [],
   "author": "",
