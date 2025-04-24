@@ -37,33 +37,51 @@
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
   <h1 style="text-align: center;">Urban Community Gardening Platform</h1>
 
   <div class="section">
-    <h2>🌿 About Us</h2>
-    <p>
-      We connect urban gardeners with community resources, expert guidance,
-      and local gardening events. Join our platform to find or start a
-      community garden near you!
-    </p>
+    <h2>🌍 Existing Gardens</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>City</th>
+          <th>ZIP Code</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="gardenTableBody">
+        <!-- JS will insert garden rows here -->
+      </tbody>
+    </table>
   </div>
 
   <div class="section">
-    <h2>📍 Find a Garden</h2>
-    <input type="text" id="locationInput" placeholder="Search by city or ZIP code" />
-    <button onclick="searchGarden()">Search</button>
-    <p id="gardenResult"></p>
+    <h2>🌱 Add a Garden</h2>
+    <form onsubmit="addGarden(event)">
+      <input type="text" id="gardenName" placeholder="Garden Name" required />
+      <input type="text" id="city" placeholder="City" required />
+      <input type="text" id="zipcode" placeholder="ZIP Code" required />
+      <textarea id="description" placeholder="Short Description" required></textarea>
+      <button type="submit">Add Garden</button>
+    </form>
+    <p id="gardenResponse"></p>
   </div>
 
   <div class="section">
     <h2>🧑‍🤝‍🧑 Connect with Gardeners</h2>
-    <p>
-      Join forums and groups to ask questions, share tips, and coordinate
-      planting schedules with neighbors.
-    </p>
+    <p>Join forums and groups to ask questions, share tips, and coordinate planting schedules with neighbors.</p>
     <button onclick="joinCommunity()">Join the Community</button>
   </div>
 
@@ -79,22 +97,52 @@
   <div class="section">
     <h2>💬 Contact Us</h2>
     <form onsubmit="sendMessage(event)">
-      <input type="text" placeholder="Your Name" id="name" required />
-      <input type="email" placeholder="Email Address" id="email" required />
-      <textarea placeholder="Your Message" id="message" required></textarea>
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="email" id="email" placeholder="Email Address" required />
+      <textarea id="message" placeholder="Your Message" required></textarea>
       <button type="submit">Send Message</button>
     </form>
     <p id="formResponse"></p>
   </div>
 
   <script>
-    function searchGarden() {
-      const location = document.getElementById('locationInput').value;
-      document.getElementById('gardenResult').innerText = `Searching gardens near "${location}"...`;
+    function loadGardens() {
+      fetch('/api/gardens')
+        .then(res => res.json())
+        .then(gardens => {
+          const table = document.getElementById('gardenTableBody');
+          table.innerHTML = '';
+          gardens.forEach(g => {
+            table.innerHTML += `
+              <tr>
+                <td>${g.name}</td>
+                <td>${g.city}</td>
+                <td>${g.zipcode}</td>
+                <td>${g.description}</td>
+              </tr>`;
+          });
+        });
     }
 
-    function joinCommunity() {
-      alert('Redirecting to the community forums...');
+    function addGarden(event) {
+      event.preventDefault();
+      const garden = {
+        name: document.getElementById('gardenName').value,
+        city: document.getElementById('city').value,
+        zipcode: document.getElementById('zipcode').value,
+        description: document.getElementById('description').value
+      };
+
+      fetch('/api/gardens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(garden)
+      })
+      .then(res => res.text())
+      .then(msg => {
+        document.getElementById('gardenResponse').innerText = msg;
+        loadGardens(); // Refresh garden list
+      });
     }
 
     function sendMessage(event) {
@@ -102,8 +150,27 @@
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const message = document.getElementById('message').value;
-      document.getElementById('formResponse').innerText = `Thanks for your message, ${name}! We'll get back to you at ${email}.`;
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      })
+      .then(res => res.text())
+      .then(response => {
+        document.getElementById('formResponse').innerText = response;
+      })
+      .catch(error => {
+        document.getElementById('formResponse').innerText = 'Something went wrong!';
+        console.error(error);
+      });
     }
+
+    function joinCommunity() {
+      alert('Redirecting to the community forums...');
+    }
+
+    window.onload = loadGardens;
   </script>
 </body>
 </html>
