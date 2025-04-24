@@ -5,7 +5,7 @@
   "main": "loginserver.js",
   "scripts": {
     "start": "node loginserver.js",
-    "build": "echo \"No frontend build needed for backend\""
+    "build": "echo \"✅ Backend doesn't require a build step.\""
   },
   "keywords": [],
   "author": "",
