@@ -1,14 +1,14 @@
 {
-  "name": "urban-community-garden-backend",
+  "name": "urban-community-garden-platform",
   "version": "1.0.0",
-  "description": "Backend for Urban Community Garden Platform",
+  "description": "Full-stack Urban Community Garden Platform - Backend",
   "main": "loginserver.js",
   "scripts": {
     "start": "node loginserver.js",
-    "build": "echo \"✅ Backend doesn't require a build step.\""
+    "build": "echo \"No frontend build needed in backend container\""
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["express", "mongoose", "backend", "api"],
+  "author": "Swaraj Bhoir",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
